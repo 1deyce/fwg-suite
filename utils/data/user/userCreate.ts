@@ -1,50 +1,33 @@
 "server only";
 
 import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
+import { PrismaClient } from "@prisma/client";
 import { userCreateProps } from "@/utils/types";
 
-export const userCreate = async ({
-  email,
-  first_name,
-  last_name,
-  profile_image_url,
-  user_id,
-}: userCreateProps) => {
-  const cookieStore = await cookies();
+const prisma = new PrismaClient();
 
-  const supabase = createServerClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+interface UserCreateParams {
+    email: string;
+    first_name?: string;
+    last_name?: string;
+    profile_image_url?: string;
+    user_id: string;
+}
 
-  try {
-    const { data, error } = await supabase
-      .from("user")
-      .insert([
-        {
-          email,
-          first_name,
-          last_name,
-          profile_image_url,
-          user_id,
-        },
-      ])
-      .select();
-
-    console.log("data", data);
-    console.log("error", error);
-
-    if (error?.code) return error;
-    return data;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
+export async function userCreate({
+	email,
+	first_name,
+	last_name,
+	profile_image_url,
+	user_id,
+}: UserCreateParams) {
+	return await prisma.user.create({
+		data: {
+			email,
+			first_name,
+			last_name,
+			profile_image_url,
+			user_id,
+		},
+	});
+}
