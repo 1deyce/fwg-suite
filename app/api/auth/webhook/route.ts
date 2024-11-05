@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 				console.log("User created:", user);
 				return NextResponse.json({
 					status: 200,
-					message: "User info inserted",
+					message: "User info inserted into DB",
 				});
 			} catch (error: any) {
 				return NextResponse.json({
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
 				return NextResponse.json({
 					status: 200,
-					message: "User info updated",
+					message: "User info updated in DB",
 				});
 			} catch (error: any) {
 				return NextResponse.json({
