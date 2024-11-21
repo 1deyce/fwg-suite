@@ -4,20 +4,34 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+    url = env("POSTGRES_PRISMA_URL")
+    directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model user {
-    id                Int      @id @default(autoincrement())
-    created_time      DateTime @default(now())
-    email             String   @unique
-    first_name        String?
-    last_name         String?
-    gender            String?
-    profile_image_url String?
-    user_id           String   @unique
-    subscription      String?
+    id                 Int       @id @default(autoincrement())
+    created_time       DateTime  @default(now())
+    email              String    @unique
+    first_name         String?
+    last_name          String?
+    gender             String?
+    profile_image_url  String?
+    user_id            String    @unique
+    
+    products           product[] @relation("UserProducts")
+}
+
+model product {
+    id           Int       @id @default(autoincrement())
+    name         String
+    description  String?
+    price        Float
+    created_at   DateTime  @default(now())
+    file_url     String?   // URL to download the product, if applicable
+    access_url   String?   // URL for accessing the product (e.g., a web app or course platform) || notion share link
+    notion_id    String?   // ID of the product for notion API
+    
+    users        user[]    @relation("UserProducts")
 }
 
 model payments {
@@ -34,30 +48,30 @@ model payments {
     payment_intent   String
 }
 
-model subscriptions {
-    id                        Int      @id @default(autoincrement())
-    created_time              DateTime @default(now())
-    subscription_id           String
-    stripe_user_id            String
-    status                    String
-    start_date                String
-    end_date                  String?
-    plan_id                   String
-    default_payment_method_id String?
-    email                     String
-    user_id                   String
-}
+// model subscriptions {
+//     id                        Int      @id @default(autoincrement())
+//     created_time              DateTime @default(now())
+//     subscription_id           String
+//     stripe_user_id            String
+//     status                    String
+//     start_date                String
+//     end_date                  String?
+//     plan_id                   String
+//     default_payment_method_id String?
+//     email                     String
+//     user_id                   String
+// }
 
-model subscriptions_plans {
-    id           Int      @id @default(autoincrement())
-    created_time DateTime @default(now())
-    plan_id      String
-    name         String
-    description  String
-    amount       String
-    currency     String
-    interval     String
-}
+// model subscriptions_plans {
+//     id           Int      @id @default(autoincrement())
+//     created_time DateTime @default(now())
+//     plan_id      String
+//     name         String
+//     description  String
+//     amount       String
+//     currency     String
+//     interval     String
+// }
 
 model invoices {
     id              Int      @id @default(autoincrement())
